@@ -43,12 +43,11 @@ public class CookieController {
 
     @PostMapping("/revoke")
     public ResponseEntity<String> revokeCookie(@RequestBody CookieData cookie) {
-        cookie.setRevoked(true);
         boolean revoked = service.revokeConsent(cookie);
         if (revoked) {
             return ResponseEntity.ok("Consentimento revogado e registrado na blockchain.");
         } else {
-            return ResponseEntity.badRequest().body("Revogação inválida ou sem consentimento prévio.");
+            return ResponseEntity.badRequest().body("Revogação inválida.");
         }
     }
 
@@ -62,9 +61,11 @@ public class CookieController {
         return service.getAllConsents();
     }
 
-    @GetMapping("/audit/status")
-    public List<CookieData> auditByStatus(@RequestParam boolean revoked) {
-        return service.getConsentsByStatus(revoked);
+
+    @GetMapping("/status")
+    public ResponseEntity<String> checkConsentStatus(@RequestParam String name) {
+        boolean active = service.isConsentActive(name);
+        return ResponseEntity.ok(active ? "Consentimento ativo." : "Consentimento revogado.");
     }
 
     @GetMapping("/audit/name")

@@ -9,19 +9,7 @@ public class CookieSmartContract {
                 && notBlank(cookie.getValue())
                 && notBlank(cookie.getClientData())
                 && notBlank(cookie.getPurpose())
-                && notBlank(cookie.getRetention())
-                && cookie.isConsentGiven()
-                && !cookie.isRevoked();
-    }
-
-    public boolean validateRevocation(CookieData cookie, CookieData previousState) {
-        // previousState é o último registro desse cookie na cadeia
-        return previousState != null
-                && previousState.isConsentGiven()
-                && !previousState.isRevoked()
-                && notBlank(cookie.getName())
-                && cookie.isConsentGiven() // revoga um consentimento previamente dado
-                && cookie.isRevoked();
+                && notBlank(cookie.getRetention());
     }
 
     private boolean notBlank(String s) {

@@ -29,14 +29,10 @@ public class CookieService {
         return true;
     }
 
-    public boolean revokeConsent(CookieData revocation) {
-        // Busca estado anterior
-        CookieData previous = blockchain.latestByName(revocation.getName()).orElse(null);
-        // Sinaliza revogação explicitamente
-        revocation.setRevoked(true);
-        revocation.setConsentGiven(true); // estamos revogando um consentimento previamente dado
-        if (!contract.validateRevocation(revocation, previous)) return false;
-        blockchain.addBlock(revocation);
+    public boolean revokeConsent(CookieData cookie) {
+        cookie.setConsentGiven(false);
+        if (!contract.validateConsent(cookie)) return false;
+        blockchain.addBlock(cookie);
         return true;
     }
 
@@ -50,15 +46,18 @@ public class CookieService {
                 .collect(Collectors.toList());
     }
 
-    public List<CookieData> getConsentsByStatus(boolean revoked) {
-        return blockchain.allByRevoked(revoked);
-    }
 
     public List<CookieData> getConsentsByName(String name) {
         return blockchain.getChain().stream()
                 .map(Block::getCookieData)
                 .filter(c -> c.getName().equalsIgnoreCase(name))
                 .collect(Collectors.toList());
+    }
+
+    public boolean isConsentActive(String name) {
+        return blockchain.latestByName(name)
+                .map(CookieData::isConsentGiven)
+                .orElse(false);
     }
 
     public boolean isChainValid() {

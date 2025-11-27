@@ -23,7 +23,7 @@ public class Blockchain {
         CookieData genesisData = new CookieData(
                 "Genesis", "Init", "Genesis Consent",
                 "Inicialização", "indefinido",
-                true, false
+                true
         );
         return new Block(0, "0", Instant.now(), genesisData);
     }
@@ -58,13 +58,4 @@ public class Blockchain {
         return Optional.empty();
     }
 
-    public List<CookieData> allByRevoked(boolean revoked) {
-        List<CookieData> result = new ArrayList<>();
-        for (Block block : chain) {
-            if (block.getCookieData().isRevoked() == revoked) {
-                result.add(block.getCookieData());
-            }
-        }
-        return result;
-    }
 }
